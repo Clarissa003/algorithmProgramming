@@ -1,39 +1,12 @@
 import React, { useState } from "react";
 
 const MovieApp = () => {
-  const hardcodedMovies = [
-    {
-      id: 1,
-      title: "Spider-Man: No Way Home",
-      year: 2021,
-      rating: 8.2,
-      image: "https://m.media-amazon.com/images/M/MV5BZWMyYzFjYTYtNTRjYi00OGExLWE2YzgtOGRmYjAxZTU3NzBiXkEyXkFqcGdeQXVyMzQ0MzA0NTM@._V1_FMjpg_UX1000_.jpg"
-    },
-    {
-      id: 2,
-      title: "The Batman",
-      year: 2022,
-      rating: 7.9,
-      image: "https://m.media-amazon.com/images/M/MV5BMDdmMTBiNTYtMDIzNi00NGVlLWIzMDYtZTk3MTQ3NGQxZGEwXkEyXkFqcGdeQXVyMzMwOTU5MDk@._V1_.jpg"
-    },
-    {
-      id: 3,
-      title: "Dune",
-      year: 2021,
-      rating: 8.0,
-      image: "https://m.media-amazon.com/images/M/MV5BN2FjNmEyNWMtYzM0ZS00NjIyLTg5YzYtYThlMGVjNzE1OGViXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_FMjpg_UX1000_.jpg"
-    }
-  ];
   const [movies, setMovies] = useState([]);
-  const [selectedRating, setSelectedRating] = useState("highest");
+  const [selectedRating, setSelectedRating] = useState("year");
   const [selectedYear, setSelectedYear] = useState("newest");
   const [searchQuery, setSearchQuery] = useState("");
-  const [performance, setPerformance] = useState({
-    algorithm: "Default",
-    speed: "0ms"
-  });
 
-
+  // Handle JSON file upload
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -41,7 +14,7 @@ const MovieApp = () => {
       reader.onload = (e) => {
         try {
           const json = JSON.parse(e.target.result);
-          setMovies(json);
+          setMovies(json); // Set the movie data after loading from file
         } catch (error) {
           console.error("Invalid JSON file");
         }
@@ -50,10 +23,48 @@ const MovieApp = () => {
     }
   };
 
+  // Import and apply sorting/filtering
+  const handleImport = async () => {
+    // Ensure there's movie data before proceeding
+    if (movies.length === 0) {
+      console.error("No movies available to process.");
+      return;
+    }
+  
+    const response = await fetch("http://localhost:5000/api/movies/import", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        movies: movies, // Add the movies data here
+        sortBy: selectedRating,  // Sort by year or rating
+        filterBy: selectedYear,  // Filter by newest or oldest
+      }),
+    });
+  
+    if (!response.ok) {
+      const text = await response.text();
+      console.error("Error response:", text);
+      return;
+    }
+  
+    const data = await response.json();
+    setMovies(data); // Updates the movie list after sorting/filtering
+  };
+  
+
+  // Handle searching movies by title
+  const handleSearch = async () => {
+    const response = await fetch(`http://localhost:5000/api/movies/search?query=${searchQuery}`);
+    const data = await response.json();
+    setMovies(data);
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-16 bg-gray-100">
       <h1 className="text-5xl font-bold mb-16">Sort & Search - Movies</h1>
-    
+
       <div className="mb-12 w-full max-w-2xl">
         <label className="block text-xl font-semibold mb-3">Upload the JSON movie file:</label>
         <input
@@ -63,16 +74,20 @@ const MovieApp = () => {
           className="border p-4 w-full rounded-lg text-base"
         />
       </div>
-    
+
       <div className="sortBox">
-          <label className="block text-sm font-semibold mb-1">Search:</label>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search movies..."
-            className="border p-2 text-sm rounded-lg w-full"
-          />
+        <label className="block text-sm font-semibold mb-1">Search:</label>
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search movies..."
+          className="border p-2 text-sm rounded-lg w-full"
+        />
+        <button onClick={handleSearch} className="bg-green-500 text-white px-4 py-[0.6rem] text-sm rounded-lg w-full h-[42px]">
+          Search
+        </button>
+
         <div className="sortFilterBox">
           <label className="block text-sm font-semibold mb-1">Sort by:</label>
           <select
@@ -80,8 +95,10 @@ const MovieApp = () => {
             onChange={(e) => setSelectedRating(e.target.value)}
             className="border p-2 text-sm rounded-lg w-full"
           >
-            <option value="lowest">Year</option>
-            <option value="highest">Rating</option>
+            <option value="year">Year (ascendant order)</option>
+            <option value="year">Year (descendant order)</option>
+            <option value="rating">Rating (ascendant order)</option>
+            <option value="rating">Rating (descendant order)</option>
           </select>
 
           <label className="block text-sm font-semibold mb-1">Filter by:</label>
@@ -92,39 +109,37 @@ const MovieApp = () => {
           >
             <option value="oldest">Oldest</option>
             <option value="newest">Newest</option>
-            <option value="highest">Highest rated</option>
-            <option value="lowest">Lowest rated</option>
+            <option value="newest">Highest rated</option>
+            <option value="newest">Lowest Rated</option>
           </select>
-          <button className="bg-green-500 text-white px-4 py-[0.6rem] text-sm rounded-lg w-full h-[42px]">
-            Import
-          </button>
-        </div>
 
-                <div className="performanceBox">
-          <label>Algorithm: {performance.algorithm}</label>
-          <label>Speed: {performance.speed}</label>
+          <button
+            onClick={handleImport}
+            className="bg-green-500 text-white px-4 py-[0.6rem] text-sm rounded-lg w-full h-[42px]"
+          >
+            Import and Sort
+          </button>
         </div>
       </div>
 
       <div className="movieBox">
-  <div className="movieCard">
-    <img 
-      src="https://m.media-amazon.com/images/M/MV5BZWMyYzFjYTYtNTRjYi00OGExLWE2YzgtOGRmYjAxZTU3NzBiXkEyXkFqcGdeQXVyMzQ0MzA0NTM@._V1_FMjpg_UX1000_.jpg" 
-      alt="Spider-Man: No Way Home" 
-      className="movieImage"
-    />
-    <div className="movieDescription">
-      <h3 className="font-semibold text-2xl mb-2 text-gray-800">Spider-Man: No Way Home</h3>
-      <div className="movieDetails">
-        <span>Year: 2021</span>
-        <span>Rating: 8.2/10</span>
+        {movies.length === 0 ? (
+          <p>No movies available. Please upload a JSON file.</p>
+        ) : (
+          movies.map((movie, index) => (
+            <div key={index} className="movieCard">
+              <img src={movie.image} alt={movie.title} className="movieImage" />
+              <div className="movieDescription">
+                <h3 className="font-semibold text-2xl mb-2 text-gray-800">{movie.title}</h3>
+                <div className="movieDetails">
+                  <span>Year: {movie.year}</span>
+                  <span>Rating: {movie.rating}/10</span>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
       </div>
-      <p className="text-gray-700">
-        With Spider-Man's identity now revealed, Peter asks Doctor Strange for help. When a spell goes wrong, dangerous foes from other worlds start to appear, forcing Peter to discover what it truly means to be Spider-Man.
-      </p>
-    </div>
-  </div>
-</div>
     </div>
   );
 };
