@@ -6,6 +6,8 @@ const MovieApp = () => {
   const [selectedSort, setSelectedSort] = useState("yearAsc");
   const [selectedFilter, setSelectedFilter] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [performance, setPerformance] = useState({ algorithm: "" });
+
 
   // Handle JSON file upload
   const handleFileUpload = (event) => {
@@ -51,7 +53,8 @@ const MovieApp = () => {
     }
 
     const data = await response.json();
-    setMovies(data); // update displayed list
+    setMovies(data.movies || []);
+    setPerformance(data.performance || {});
   };
 
   // Handle searching movies by title
@@ -124,6 +127,13 @@ const MovieApp = () => {
           Apply Sort / Filter
         </button>
       </div>
+
+      <div className="performanceBox">
+  <label>Algorithm: {performance.algorithm}</label>
+  {performance.executionTime && (
+    <p>Execution Time: {performance.executionTime.toFixed(2)} ms</p>
+  )}
+</div>
 
       <div className="movieBox">
         {movies.length === 0 ? (

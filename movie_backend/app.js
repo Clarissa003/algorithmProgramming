@@ -126,9 +126,14 @@ app.post('/api/movies/import', (req, res) => {
   }
 
   let result = [...movieData];
+  let algorithmUsed = "";
+  let startTime, endTime, executionTime;
+
+
 
   // Handle filtering (oldest/newest) using heap
   if (filterBy === "oldest" || filterBy === "newest") {
+    startTime = performance.now(); // Start time before filtering
     const compareFn = filterBy === "newest"
       ? (a, b) => b.year - a.year
       : (a, b) => a.year - b.year;
@@ -136,21 +141,29 @@ app.post('/api/movies/import', (req, res) => {
     const heap = new BinaryHeap(compareFn);
     result.forEach(movie => heap.push(movie));
     const topMovie = heap.pop();
+    endTime = performance.now(); // End time after filtering
+  executionTime = endTime - startTime; // Calculate the execution time in milliseconds
+    algorithmUsed = "Heap";
 
-    return res.json([topMovie]);
+    return res.json({ movies: [topMovie], performance: { algorithm: algorithmUsed, executionTime: executionTime } });
   }
 
   // Handle sorting
   const [sortKey, sortOrder] = sortBy.split("-");
 
+
+
   if (sortKey === "year") {
+    startTime = performance.now(); // Start time before sorting
     result = mergeSort(result, "year");
-    if (sortOrder === "desc") result.reverse();
-  } else if (sortKey === "rating") {
-    result.sort((a, b) => sortOrder === "asc" ? a.rating - b.rating : b.rating - a.rating);
+    if (sortOrder === "desc") result.reverse(); 
+    endTime = performance.now(); // End time after sorting
+    executionTime = endTime - startTime; // Calculate the execution time in milliseconds// Reverse the result if descending order is selected
+    algorithmUsed = "Merge Sort"; // Always use Merge Sort for year sorting
   }
 
-  res.json(result);
+  res.json({ movies: result, performance: { algorithm: algorithmUsed, executionTime: executionTime } });
+
 });
 
 // Search movies by title
