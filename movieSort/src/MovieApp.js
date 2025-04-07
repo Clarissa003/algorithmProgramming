@@ -117,7 +117,7 @@ const MovieApp = () => {
             onClick={handleImport}
             className="bg-green-500 text-white px-4 py-[0.6rem] text-sm rounded-lg w-full h-[42px]"
           >
-            Import and Sort
+            Sort
           </button>
         </div>
       </div>
