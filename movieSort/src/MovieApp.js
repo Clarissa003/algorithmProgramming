@@ -96,7 +96,7 @@ const MovieApp = () => {
             <option value="lowest">Lowest rated</option>
           </select>
           <button className="bg-green-500 text-white px-4 py-[0.6rem] text-sm rounded-lg w-full h-[42px]">
-            Search
+            Import
           </button>
         </div>
 
