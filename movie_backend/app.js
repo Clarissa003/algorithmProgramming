@@ -49,8 +49,15 @@ app.post('/api/movies/import', (req, res) => {
 
   if (sortKey === "year") {
     startTime = performance.now();
-    result = mergeSort(result, "year");
+  
+    // Define the compareFn to compare based on the 'year'
+    const compareFn = (a, b) => a.year - b.year;
+  
+    result = mergeSort(result, compareFn);
+  
+    // Reverse the order if sortOrder is 'desc'
     if (sortOrder === "desc") result.reverse();
+  
     endTime = performance.now();
     executionTime = endTime - startTime;
     algorithmUsed = "Merge Sort";
