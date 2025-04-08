@@ -4,6 +4,7 @@ import Movie from './data/Movie.js';
 import BinaryHeap from './utils/BinaryHeap.js';
 import LinkedList from './data/LinkedList.js';
 import { mergeSort } from './utils/MergeSort.js';
+import BinaryTree from './utils/BinaryTree.js';
 
 const app = express();
 const port = 5000;
@@ -53,37 +54,64 @@ app.post('/api/movies/import', (req, res) => {
       endTime = performance.now();
       const dataStructureTime = endTime - startTime;
 
-if (filterBy === "oldest" || filterBy === "newest") {
-  startTime = performance.now();
-  const compareFn = filterBy === "newest"
-      ? (a, b) => b.year - a.year  
-      : (a, b) => a.year - b.year; 
+      if (filterBy === "oldest" || filterBy === "newest") {
+          startTime = performance.now();
+          const compareFn = filterBy === "newest"
+              ? (a, b) => b.year - a.year  
+              : (a, b) => a.year - b.year; 
 
-  const filterHeap = new BinaryHeap(compareFn);
-  result.forEach(movie => filterHeap.push(movie));
+          const filterHeap = new BinaryHeap(compareFn);
+          result.forEach(movie => filterHeap.push(movie));
 
-  const topMovie = filterHeap.pop();
+          const topMovie = filterHeap.pop();
 
-  endTime = performance.now();
-  executionTime = endTime - startTime;
-  algorithmUsed = "Heap Filter";
+          endTime = performance.now();
+          executionTime = endTime - startTime;
+          algorithmUsed = "Heap Filter";
 
-  return res.json({
-      movies: [{
-          title: topMovie.title,   
-          year: topMovie.year,     
-          rating: topMovie.rating, 
-          image: topMovie.image    
-      }],
-      performance: {
-          algorithm: algorithmUsed,
-          executionTime,
-          dataStructure: dataStructureUsed,
-          dataStructureTime
+          return res.json({
+              movies: [{
+                  title: topMovie.title,   
+                  year: topMovie.year,     
+                  rating: topMovie.rating, 
+                  image: topMovie.image    
+              }],
+              performance: {
+                  algorithm: algorithmUsed,
+                  executionTime,
+                  dataStructure: dataStructureUsed,
+                  dataStructureTime
+              }
+          });
+      } else if (filterBy === "highest" || filterBy === "lowest") {
+          startTime = performance.now();
+          const compareFn = (a, b) => a.rating - b.rating;
+          const bst = new BinaryTree(compareFn);
+          result.forEach(movie => bst.insert(movie));
+
+          const filteredMovie = filterBy === "highest" 
+              ? bst.findMax()
+              : bst.findMin();
+
+          endTime = performance.now();
+          executionTime = endTime - startTime;
+          algorithmUsed = "Binary Tree";
+
+          return res.json({
+              movies: [{
+                  title: filteredMovie.title,
+                  year: filteredMovie.year,
+                  rating: filteredMovie.rating,
+                  image: filteredMovie.image
+              }],
+              performance: {
+                  algorithm: algorithmUsed,
+                  executionTime,
+                  dataStructure: dataStructureUsed,
+                  dataStructureTime
+              }
+          });
       }
-  });
-}
-
 
       if (sortBy) {
           const [sortKey, sortOrder] = sortBy.split("-");
@@ -127,7 +155,6 @@ if (filterBy === "oldest" || filterBy === "newest") {
       res.status(500).json({ error: "Internal server error" });
   }
 });
-
 
 app.get('/api/movies/search', (req, res) => {
     try {
