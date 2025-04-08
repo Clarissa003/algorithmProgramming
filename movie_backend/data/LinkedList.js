@@ -9,9 +9,9 @@ class LinkedList {
     constructor() {
         this.head = null;
         this.tail = null;
+        this.length = 0;
     }
 
-    // Required manipulation methods
     add(value) {
         const node = new LinkedListNode(value);
         if (!this.head) {
@@ -21,23 +21,26 @@ class LinkedList {
             this.tail.next = node;
             this.tail = node;
         }
+        this.length++;
+        return this;
     }
 
-    delete(value) {
+    delete(value, compareFn = (a, b) => a === b) {
         if (!this.head) return false;
 
-        // Handle head deletion
-        if (this.head.value === value) {
+        if (compareFn(this.head.value, value)) {
             this.head = this.head.next;
             if (!this.head) this.tail = null;
+            this.length--;
             return true;
         }
 
         let current = this.head;
         while (current.next) {
-            if (current.next.value === value) {
+            if (compareFn(current.next.value, value)) {
                 current.next = current.next.next;
                 if (!current.next) this.tail = current;
+                this.length--;
                 return true;
             }
             current = current.next;
@@ -45,7 +48,6 @@ class LinkedList {
         return false;
     }
 
-    // Existing method kept intact
     toArray() {
         const result = [];
         let current = this.head;
@@ -54,6 +56,14 @@ class LinkedList {
             current = current.next;
         }
         return result;
+    }
+
+    size() {
+        return this.length;
+    }
+
+    isEmpty() {
+        return this.length === 0;
     }
 }
 
