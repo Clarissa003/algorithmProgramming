@@ -22,7 +22,6 @@ app.post('/api/movies/import', (req, res) => {
           return res.status(400).send("No movies available to process.");
       }
 
-      // Create Movie instances
       const movieInstances = movieData.map(m => new Movie(m.title, m.year, m.rating, m.image));
 
       let result = [];
@@ -30,7 +29,6 @@ app.post('/api/movies/import', (req, res) => {
       let dataStructureUsed = "Array";
       let startTime, endTime, executionTime;
 
-      // Store in selected data structure
       startTime = performance.now();
       switch (dataStructure) {
           case 'linkedlist':
@@ -54,18 +52,16 @@ app.post('/api/movies/import', (req, res) => {
       }
       endTime = performance.now();
       const dataStructureTime = endTime - startTime;
-      
-// Filtering
+
 if (filterBy === "oldest" || filterBy === "newest") {
   startTime = performance.now();
   const compareFn = filterBy === "newest"
-      ? (a, b) => b.year - a.year  // Make sure to use the getter here
-      : (a, b) => a.year - b.year; // Make sure to use the getter here
+      ? (a, b) => b.year - a.year  
+      : (a, b) => a.year - b.year; 
 
   const filterHeap = new BinaryHeap(compareFn);
   result.forEach(movie => filterHeap.push(movie));
 
-  // Access the top movie using the getter method
   const topMovie = filterHeap.pop();
 
   endTime = performance.now();
@@ -74,10 +70,10 @@ if (filterBy === "oldest" || filterBy === "newest") {
 
   return res.json({
       movies: [{
-          title: topMovie.title,   // Use the getter to access the title
-          year: topMovie.year,     // Use the getter to access the year
-          rating: topMovie.rating, // Use the getter to access the rating
-          image: topMovie.image    // Use the getter to access the image
+          title: topMovie.title,   
+          year: topMovie.year,     
+          rating: topMovie.rating, 
+          image: topMovie.image    
       }],
       performance: {
           algorithm: algorithmUsed,
@@ -89,7 +85,6 @@ if (filterBy === "oldest" || filterBy === "newest") {
 }
 
 
-      // Sorting
       if (sortBy) {
           const [sortKey, sortOrder] = sortBy.split("-");
           startTime = performance.now();
@@ -113,7 +108,6 @@ if (filterBy === "oldest" || filterBy === "newest") {
           executionTime = endTime - startTime;
       }
 
-      // Return the movies with getters invoked
       res.json({
           movies: result.map(movie => ({
               title: movie.title,
@@ -135,7 +129,6 @@ if (filterBy === "oldest" || filterBy === "newest") {
 });
 
 
-// GET /api/movies/search
 app.get('/api/movies/search', (req, res) => {
     try {
         const { query, dataStructure } = req.query;

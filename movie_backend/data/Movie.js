@@ -6,7 +6,6 @@ class Movie {
         this.image = image;
     }
 
-    // Getters
     get title() {
         return this._title;
     }
@@ -23,7 +22,6 @@ class Movie {
         return this._image;
     }
 
-    // Setters
     set title(newTitle) {
         this._title = newTitle;
     }
