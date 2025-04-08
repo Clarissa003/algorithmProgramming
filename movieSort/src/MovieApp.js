@@ -40,7 +40,7 @@ const MovieApp = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        movies: originalMovies,      // use full list
+        movies: originalMovies,
         sortBy: selectedSort,
         filterBy: selectedFilter,
       }),

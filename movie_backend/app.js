@@ -14,7 +14,7 @@ app.use(cors());
 
 let movies = [];
 
-// POST /api/movies/import
+//importing, sorting and filtering movies
 app.post('/api/movies/import', (req, res) => {
   try {
       const { movies: movieData, sortBy, filterBy, dataStructure } = req.body;
@@ -30,6 +30,7 @@ app.post('/api/movies/import', (req, res) => {
       let dataStructureUsed = "Array";
       let startTime, endTime, executionTime;
 
+      //load data into data strcuture
       startTime = performance.now();
       switch (dataStructure) {
           case 'linkedlist':
@@ -47,6 +48,13 @@ app.post('/api/movies/import', (req, res) => {
               }
               dataStructureUsed = "Binary Heap";
               break;
+            case 'binarytree':
+                const treeCompareFn = (a, b) => a.year - b.year;
+                const bst = new BinaryTree(treeCompareFn);
+                movieInstances.forEach(movie => bst.insert(movie));
+                result = bst.toArray(); 
+                dataStructureUsed = "Binary Search Tree";
+                break;
           default:
               result = [...movieInstances];
               dataStructureUsed = "Array";
@@ -54,6 +62,7 @@ app.post('/api/movies/import', (req, res) => {
       endTime = performance.now();
       const dataStructureTime = endTime - startTime;
 
+      //apply filters
       if (filterBy === "oldest" || filterBy === "newest") {
           startTime = performance.now();
           const compareFn = filterBy === "newest"
@@ -113,6 +122,7 @@ app.post('/api/movies/import', (req, res) => {
           });
       }
 
+      //apply sorting
       if (sortBy) {
           const [sortKey, sortOrder] = sortBy.split("-");
           startTime = performance.now();
@@ -156,6 +166,7 @@ app.post('/api/movies/import', (req, res) => {
   }
 });
 
+//search movies
 app.get('/api/movies/search', (req, res) => {
     try {
         const { query, dataStructure } = req.query;
