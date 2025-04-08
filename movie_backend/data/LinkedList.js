@@ -48,6 +48,35 @@ class LinkedList {
         return false;
     }
 
+    get(index) {
+        if (index < 0 || index >= this.length) return null;
+        let current = this.head;
+        for (let i = 0; i < index; i++) {
+            current = current.next;
+        }
+        return current.value;
+    }
+
+    insertAt(index, value) {
+        if (index < 0 || index > this.length) return false;
+        if (index === this.length) return this.add(value);
+        
+        const node = new LinkedListNode(value);
+        if (index === 0) {
+            node.next = this.head;
+            this.head = node;
+        } else {
+            let prev = this.head;
+            for (let i = 0; i < index - 1; i++) {
+                prev = prev.next;
+            }
+            node.next = prev.next;
+            prev.next = node;
+        }
+        this.length++;
+        return true;
+    }
+
     toArray() {
         const result = [];
         let current = this.head;

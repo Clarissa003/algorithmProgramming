@@ -4,6 +4,18 @@ class BinaryHeap {
         this.compare = compareFn;
     }
   
+    peek() {
+        return this.heap.length > 0 ? this.heap[0] : null;
+    }
+
+    clear() {
+        this.heap = [];
+    }
+
+    contains(value, compareFn = (a, b) => a === b) {
+        return this.heap.some(item => compareFn(item, value));
+    }
+    
     push(element) {
         this.heap.push(element);
         this._heapifyUp();
