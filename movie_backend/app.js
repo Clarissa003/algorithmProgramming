@@ -4,6 +4,8 @@ import Movie from './data/Movie.js';
 import BinaryHeap from './utils/BinaryHeap.js';
 import LinkedList from './data/LinkedList.js';
 import { mergeSort } from './utils/MergeSort.js';
+import { quickSort } from './utils/QuickSort.js';
+
 
 const app = express();
 const port = 5000;
@@ -85,28 +87,28 @@ if (filterBy === "oldest" || filterBy === "newest") {
 }
 
 
-      if (sortBy) {
-          const [sortKey, sortOrder] = sortBy.split("-");
-          startTime = performance.now();
+if (sortBy) {
+    const [sortKey, sortOrder] = sortBy.split("-");
+    startTime = performance.now();
 
-          if (sortKey === "year") {
-              const compareFn = (a, b) => a.year - b.year;
-              result = mergeSort(result, compareFn);
-              algorithmUsed = "Merge Sort";
-          } else if (sortKey === "title") {
-              const compareFn = (a, b) => a.title.localeCompare(b.title);
-              result = mergeSort(result, compareFn);
-              algorithmUsed = "Merge Sort";
-          } else if (sortKey === "rating") {
-              const compareFn = (a, b) => a.rating - b.rating;
-              result = mergeSort(result, compareFn);
-              algorithmUsed = "Merge Sort";
-          }
+    if (sortKey === "year") {
+        const compareFn = (a, b) => a.year - b.year;
+        result = mergeSort(result, compareFn);
+        algorithmUsed = "Merge Sort";
+    } else if (sortKey === "title") {
+        const compareFn = (a, b) => a.title.localeCompare(b.title);
+        result = mergeSort(result, compareFn);
+        algorithmUsed = "Merge Sort";
+    } else if (sortKey === "rating") {
+        const compareFn = (a, b) => a.compareRating(b);
+        result = quickSort(result, compareFn);
+        algorithmUsed = "Quick Sort";
+    }
 
-          if (sortOrder === "desc") result.reverse();
-          endTime = performance.now();
-          executionTime = endTime - startTime;
-      }
+    if (sortOrder === "desc") result.reverse();
+    endTime = performance.now();
+    executionTime = endTime - startTime;
+}
 
       res.json({
           movies: result.map(movie => ({
