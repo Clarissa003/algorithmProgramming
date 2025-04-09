@@ -3,7 +3,7 @@ import React, { useState } from "react";
 const MovieApp = () => {
   const [movies, setMovies] = useState([]);
   const [originalMovies, setOriginalMovies] = useState([]);
-  const [selectedSort, setSelectedSort] = useState("yearAsc");
+  const [selectedSort, setSelectedSort] = useState("year-asc");
   const [selectedFilter, setSelectedFilter] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [performance, setPerformance] = useState({ algorithm: "" });
@@ -38,7 +38,7 @@ const MovieApp = () => {
       },
       body: JSON.stringify({
         movies: originalMovies,
-        sortBy: selectedSort,
+        sortBy: selectedSort, // This will be "rating-asc" or "rating-desc"
         filterBy: selectedFilter,
       }),
     });
@@ -64,52 +64,38 @@ const MovieApp = () => {
     <div className="min-h-screen flex flex-col items-center justify-center p-16 bg-gray-100">
       <h1 className="text-5xl font-bold mb-16">Sort & Search - Movies</h1>
 
-      <div className="mb-12 w-full max-w-3xl">
-        <label className="block text-xl font-semibold mb-3 text-gray-800">Upload the JSON movie file:</label>
+      <div className="mb-12 w-full max-w-2xl">
+        <label className="block text-xl font-semibold mb-3">Upload the JSON movie file:</label>
         <input
           type="file"
           accept=".json"
           onChange={handleFileUpload}
-          className="border-2 border-gray-300 p-4 w-full rounded-lg text-base bg-white focus:border-blue-500 focus:outline-none"
+          className="border p-4 w-full rounded-lg text-base"
         />
       </div>
 
-      <div className="sortBox w-full max-w-3xl space-y-4 mb-8 p-6 bg-white rounded-xl shadow-md">
-        <label className="block text-sm font-semibold text-gray-700">Search:</label>
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search movies..."
-          className="border-2 border-gray-300 p-3 text-sm rounded-lg w-full focus:border-blue-500 focus:outline-none"
-        />
-        <button
-          onClick={handleSearch}
-          className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 text-sm rounded-lg w-full font-medium transition-colors duration-200 shadow-sm"
-        >
-          Search
-        </button>
+      <div className="sortBox w-full max-w-2xl space-y-4">
+        
 
-        <label className="block text-sm font-semibold text-gray-700 mt-4">Sort by:</label>
+        <label className="block text-sm font-semibold">Sort by:</label>
         <select
           value={selectedSort}
           onChange={(e) => setSelectedSort(e.target.value)}
-          className="border-2 border-gray-300 p-3 text-sm rounded-lg w-full focus:border-blue-500 focus:outline-none bg-white"
+          className="border p-2 text-sm rounded-lg w-full"
         >
-          <option value="none">-- None selected --</option>
           <option value="year-asc">Year (ascendant order)</option>
           <option value="year-desc">Year (descendant order)</option>
           <option value="rating-asc">Rating (ascendant order)</option>
           <option value="rating-desc">Rating (descendant order)</option>
         </select>
 
-        <label className="block text-sm font-semibold text-gray-700 mt-4">Filter by:</label>
+        <label className="block text-sm font-semibold">Filter by:</label>
         <select
           value={selectedFilter}
           onChange={(e) => setSelectedFilter(e.target.value)}
-          className="border-2 border-gray-300 p-3 text-sm rounded-lg w-full focus:border-blue-500 focus:outline-none bg-white padding:80"
+          className="border p-2 text-sm rounded-lg w-full"
         >
-          <option value="none">-- No Filter --</option>
+          <option value="">-- No Filter --</option>
           <option value="oldest">Oldest</option>
           <option value="newest">Newest</option>
           <option value="highest">Highest Rated</option>
@@ -118,22 +104,22 @@ const MovieApp = () => {
 
         <button
           onClick={handleImport}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 text-sm rounded-lg w-full font-medium mt-4 transition-colors duration-200 shadow-sm"
+          className="bg-blue-500 text-white px-4 py-2 text-sm rounded-lg w-full"
         >
           Apply Sort / Filter
         </button>
       </div>
 
-      <div className="performanceBox bg-white p-4 rounded-lg shadow-sm mb-8 w-full max-w-3xl text-center">
-        <label className="font-semibold text-gray-700">Algorithm: {performance.algorithm}</label>
+      <div className="performanceBox">
+        <label>Algorithm: {performance.algorithm}</label>
         {performance.executionTime && (
-          <p className="text-gray-600">Execution Time: {performance.executionTime.toFixed(2)} ms</p>
+          <p>Execution Time: {performance.executionTime.toFixed(2)} ms</p>
         )}
       </div>
 
       <div className="movieBox">
         {movies.length === 0 ? (
-          <p className="text-gray-600">No movies available. Please upload a JSON file.</p>
+          <p>No movies available. Please upload a JSON file.</p>
         ) : (
           movies.map((movie, index) => (
             <div key={index} className="movieCard">
