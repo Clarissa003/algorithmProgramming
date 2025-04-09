@@ -66,7 +66,7 @@ if (filterBy === "oldest" || filterBy === "newest") {
 
   endTime = performance.now();
   executionTime = endTime - startTime;
-  algorithmUsed = "Heap Filter";
+  algorithmUsed = "Heap Search";
 
   return res.json({
       movies: [{
