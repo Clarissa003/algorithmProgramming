@@ -4,6 +4,8 @@ import Movie from './data/Movie.js';
 import BinaryHeap from './utils/BinaryHeap.js';
 import LinkedList from './data/LinkedList.js';
 import { mergeSort } from './utils/MergeSort.js';
+import BinaryTree from './utils/BinaryTree.js';
+import { quickSort } from './utils/QuickSort.js';
 
 const app = express();
 const port = 5000;
@@ -13,7 +15,7 @@ app.use(cors());
 
 let movies = [];
 
-// POST /api/movies/import
+//importing, sorting and filtering movies
 app.post('/api/movies/import', (req, res) => {
   try {
       const { movies: movieData, sortBy, filterBy, dataStructure } = req.body;
@@ -25,10 +27,11 @@ app.post('/api/movies/import', (req, res) => {
       const movieInstances = movieData.map(m => new Movie(m.title, m.year, m.rating, m.image));
 
       let result = [];
-      let algorithmUsed = "";
+      let algorithmUsed = "None"; // Initialize as "None"
       let dataStructureUsed = "Array";
       let startTime, endTime, executionTime;
 
+      //load data into data strcuture
       startTime = performance.now();
       switch (dataStructure) {
           case 'linkedlist':
@@ -46,6 +49,13 @@ app.post('/api/movies/import', (req, res) => {
               }
               dataStructureUsed = "Binary Heap";
               break;
+            case 'binarytree':
+                const treeCompareFn = (a, b) => a.year - b.year;
+                const bst = new BinaryTree(treeCompareFn);
+                movieInstances.forEach(movie => bst.insert(movie));
+                result = bst.toArray(); 
+                dataStructureUsed = "Binary Search Tree";
+                break;
           default:
               result = [...movieInstances];
               dataStructureUsed = "Array";
@@ -53,40 +63,71 @@ app.post('/api/movies/import', (req, res) => {
       endTime = performance.now();
       const dataStructureTime = endTime - startTime;
 
-if (filterBy === "oldest" || filterBy === "newest") {
-  startTime = performance.now();
-  const compareFn = filterBy === "newest"
-      ? (a, b) => b.year - a.year  
-      : (a, b) => a.year - b.year; 
+      //apply filters
+      if (filterBy === "oldest" || filterBy === "newest") {
+          startTime = performance.now();
+          const compareFn = filterBy === "newest"
+              ? (a, b) => b.year - a.year  
+              : (a, b) => a.year - b.year; 
 
-  const filterHeap = new BinaryHeap(compareFn);
-  result.forEach(movie => filterHeap.push(movie));
+          const filterHeap = new BinaryHeap(compareFn);
+          result.forEach(movie => filterHeap.push(movie));
 
-  const topMovie = filterHeap.pop();
+          const topMovie = filterHeap.pop();
+          endTime = performance.now();
+          executionTime = endTime - startTime;
+          algorithmUsed = "Heap Filter";
 
-  endTime = performance.now();
-  executionTime = endTime - startTime;
-  algorithmUsed = "Heap Search";
+          return res.json({
+              movies: [{
+                  title: topMovie.title,   
+                  year: topMovie.year,     
+                  rating: topMovie.rating, 
+                  image: topMovie.image    
+              }],
+              performance: {
+                  algorithm: algorithmUsed,
+                  executionTime,
+                  dataStructure: dataStructureUsed,
+                  dataStructureTime
+              }
+          });
+      } else if (filterBy === "highest" || filterBy === "lowest") {
+          startTime = performance.now();
+          const compareFn = (a, b) => a.rating - b.rating;
+          const bst = new BinaryTree(compareFn);
+          result.forEach(movie => bst.insert(movie));
 
-  return res.json({
-      movies: [{
-          title: topMovie.title,   
-          year: topMovie.year,     
-          rating: topMovie.rating, 
-          image: topMovie.image    
-      }],
-      performance: {
-          algorithm: algorithmUsed,
-          executionTime,
-          dataStructure: dataStructureUsed,
-          dataStructureTime
+          const filteredMovie = filterBy === "highest" 
+              ? bst.findMax()
+              : bst.findMin();
+
+          endTime = performance.now();
+          executionTime = endTime - startTime;
+          algorithmUsed = "Binary Tree";
+
+          return res.json({
+              movies: [{
+                  title: filteredMovie.title,
+                  year: filteredMovie.year,
+                  rating: filteredMovie.rating,
+                  image: filteredMovie.image
+              }],
+              performance: {
+                  algorithm: algorithmUsed,
+                  executionTime,
+                  dataStructure: dataStructureUsed,
+                  dataStructureTime
+              }
+          });
       }
-  });
-}
 
-
+      //apply sorting
       if (sortBy) {
-          const [sortKey, sortOrder] = sortBy.split("-");
+          // Extract the base sort key (remove -asc/-desc)
+          const sortKey = sortBy.split('-')[0]; // This will get "year", "title", or "rating"
+          const sortOrder = sortBy.split('-')[1]; // This will get "asc" or "desc"
+          
           startTime = performance.now();
 
           if (sortKey === "year") {
@@ -98,9 +139,9 @@ if (filterBy === "oldest" || filterBy === "newest") {
               result = mergeSort(result, compareFn);
               algorithmUsed = "Merge Sort";
           } else if (sortKey === "rating") {
-              const compareFn = (a, b) => a.rating - b.rating;
-              result = mergeSort(result, compareFn);
-              algorithmUsed = "Merge Sort";
+              const compareFn = (a, b) => a.compareRating(b);
+              result = quickSort(result, compareFn);
+              algorithmUsed = "Quick Sort";
           }
 
           if (sortOrder === "desc") result.reverse();
@@ -128,7 +169,7 @@ if (filterBy === "oldest" || filterBy === "newest") {
   }
 });
 
-
+//search movies
 app.get('/api/movies/search', (req, res) => {
     try {
         const { query, dataStructure } = req.query;

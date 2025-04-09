@@ -65,7 +65,6 @@ label {
   font-weight: 600;
   margin-bottom: 0.5rem;
   display: block;
-  
 }
 
 select {
@@ -73,8 +72,7 @@ select {
   font-size: 1.1rem;
   border-radius: 8px;
   border: 1px solid #ccc;
-  width: 100%;
-  max-width: 600px;
+  width: 200px;
   margin-bottom: 1.5rem;
 }
 
@@ -87,12 +85,17 @@ button {
   border: none;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  width: 100%;
-  max-width: 150px;
+  width: 200px;
+  min-width: 100px;
 }
 
 button:hover {
   background-color: #2f855a;
+}
+
+.sortBox > div:first-child button {
+  width: 200px;
+  margin-top: 8px;
 }
 
 form,
@@ -110,9 +113,7 @@ select, button, input[type="file"] {
 
 label {
   font-size: 0.95rem;
-
 }
-
 
 .sortBox {
   display: flex;
@@ -129,7 +130,7 @@ label {
 
 .sortFilterBox {
   display: flex;
-  gap: 15px;
+  gap: 20px;
   align-items: baseline;
 }
 
@@ -139,7 +140,7 @@ label {
 
 .sortFilterBox > div {
   display: flex;
-  align-items:normal;
+  align-items: normal;
   gap: 5px; 
 }
 
@@ -151,15 +152,15 @@ label {
 }
 
 .sortFilterBox select {
-  width: 120px; 
+  width: 200px;
   padding: 8px 12px;
   border-radius: 8px;
   border: 1px solid #ccc;
 }
 
 .sortFilterBox button {
-  width: 140px; 
-  height: 32px;
+  width: 100px;
+  height: 20px;
   padding: 0 12px;
   background-color: #38a169;
   color: white;
@@ -179,16 +180,16 @@ label {
   padding: 8px 12px;
   border: 1px solid #ccc;
   border-radius: 8px;
-  height:22px;
+  height: 22px;
+  width: 200px;
 }
 
-.performanceBox{
+.performanceBox {
   display: flex;
   justify-items: center;
 }
 
-.performanceBox > label
-{
+.performanceBox > label {
   margin-left: 40px;
   font-weight: 150;
 }
