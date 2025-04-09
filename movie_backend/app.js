@@ -6,7 +6,6 @@ import LinkedList from './data/LinkedList.js';
 import { mergeSort } from './utils/MergeSort.js';
 import { quickSort } from './utils/QuickSort.js';
 
-
 const app = express();
 const port = 5000;
 
@@ -27,7 +26,7 @@ app.post('/api/movies/import', (req, res) => {
       const movieInstances = movieData.map(m => new Movie(m.title, m.year, m.rating, m.image));
 
       let result = [];
-      let algorithmUsed = "";
+      let algorithmUsed = "None"; // Initialize as "None"
       let dataStructureUsed = "Array";
       let startTime, endTime, executionTime;
 
@@ -55,60 +54,62 @@ app.post('/api/movies/import', (req, res) => {
       endTime = performance.now();
       const dataStructureTime = endTime - startTime;
 
-if (filterBy === "oldest" || filterBy === "newest") {
-  startTime = performance.now();
-  const compareFn = filterBy === "newest"
-      ? (a, b) => b.year - a.year  
-      : (a, b) => a.year - b.year; 
+      if (filterBy === "oldest" || filterBy === "newest") {
+          startTime = performance.now();
+          const compareFn = filterBy === "newest"
+              ? (a, b) => b.year - a.year  
+              : (a, b) => a.year - b.year; 
 
-  const filterHeap = new BinaryHeap(compareFn);
-  result.forEach(movie => filterHeap.push(movie));
+          const filterHeap = new BinaryHeap(compareFn);
+          result.forEach(movie => filterHeap.push(movie));
 
-  const topMovie = filterHeap.pop();
+          const topMovie = filterHeap.pop();
 
-  endTime = performance.now();
-  executionTime = endTime - startTime;
-  algorithmUsed = "Heap Filter";
+          endTime = performance.now();
+          executionTime = endTime - startTime;
+          algorithmUsed = "Heap Filter";
 
-  return res.json({
-      movies: [{
-          title: topMovie.title,   
-          year: topMovie.year,     
-          rating: topMovie.rating, 
-          image: topMovie.image    
-      }],
-      performance: {
-          algorithm: algorithmUsed,
-          executionTime,
-          dataStructure: dataStructureUsed,
-          dataStructureTime
+          return res.json({
+              movies: [{
+                  title: topMovie.title,   
+                  year: topMovie.year,     
+                  rating: topMovie.rating, 
+                  image: topMovie.image    
+              }],
+              performance: {
+                  algorithm: algorithmUsed,
+                  executionTime,
+                  dataStructure: dataStructureUsed,
+                  dataStructureTime
+              }
+          });
       }
-  });
-}
 
+      if (sortBy) {
+          // Extract the base sort key (remove -asc/-desc)
+          const sortKey = sortBy.split('-')[0]; // This will get "year", "title", or "rating"
+          const sortOrder = sortBy.split('-')[1]; // This will get "asc" or "desc"
+          
+          startTime = performance.now();
 
-if (sortBy) {
-    const [sortKey, sortOrder] = sortBy.split("-");
-    startTime = performance.now();
+          if (sortKey === "year") {
+              const compareFn = (a, b) => a.year - b.year;
+              result = mergeSort(result, compareFn);
+              algorithmUsed = "Merge Sort";
+          } else if (sortKey === "title") {
+              const compareFn = (a, b) => a.title.localeCompare(b.title);
+              result = mergeSort(result, compareFn);
+              algorithmUsed = "Merge Sort";
+          } else if (sortKey === "rating") {
+              const compareFn = (a, b) => a.compareRating(b);
+              result = quickSort(result, compareFn);
+              algorithmUsed = "Quick Sort";
+          }
 
-    if (sortKey === "year") {
-        const compareFn = (a, b) => a.year - b.year;
-        result = mergeSort(result, compareFn);
-        algorithmUsed = "Merge Sort";
-    } else if (sortKey === "title") {
-        const compareFn = (a, b) => a.title.localeCompare(b.title);
-        result = mergeSort(result, compareFn);
-        algorithmUsed = "Merge Sort";
-    } else if (sortKey === "rating") {
-        const compareFn = (a, b) => a.compareRating(b);
-        result = quickSort(result, compareFn);
-        algorithmUsed = "Quick Sort";
-    }
-
-    if (sortOrder === "desc") result.reverse();
-    endTime = performance.now();
-    executionTime = endTime - startTime;
-}
+          if (sortOrder === "desc") result.reverse();
+          endTime = performance.now();
+          executionTime = endTime - startTime;
+      }
 
       res.json({
           movies: result.map(movie => ({
@@ -129,7 +130,6 @@ if (sortBy) {
       res.status(500).json({ error: "Internal server error" });
   }
 });
-
 
 app.get('/api/movies/search', (req, res) => {
     try {

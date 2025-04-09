@@ -2,14 +2,12 @@ import React, { useState } from "react";
 
 const MovieApp = () => {
   const [movies, setMovies] = useState([]);
-  const [originalMovies, setOriginalMovies] = useState([]); // <-- store full movie list
-  const [selectedSort, setSelectedSort] = useState("yearAsc");
+  const [originalMovies, setOriginalMovies] = useState([]);
+  const [selectedSort, setSelectedSort] = useState("year-asc");
   const [selectedFilter, setSelectedFilter] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [performance, setPerformance] = useState({ algorithm: "" });
 
-
-  // Handle JSON file upload
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -17,8 +15,8 @@ const MovieApp = () => {
       reader.onload = (e) => {
         try {
           const json = JSON.parse(e.target.result);
-          setOriginalMovies(json); // full list
-          setMovies(json);         // display list
+          setOriginalMovies(json);
+          setMovies(json);
         } catch (error) {
           console.error("Invalid JSON file");
         }
@@ -27,7 +25,6 @@ const MovieApp = () => {
     }
   };
 
-  // Import and apply sorting/filtering
   const handleImport = async () => {
     if (originalMovies.length === 0) {
       console.error("No movies available to process.");
@@ -40,8 +37,8 @@ const MovieApp = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        movies: originalMovies,      // use full list
-        sortBy: selectedSort,
+        movies: originalMovies,
+        sortBy: selectedSort, // This will be "rating-asc" or "rating-desc"
         filterBy: selectedFilter,
       }),
     });
@@ -57,13 +54,11 @@ const MovieApp = () => {
     setPerformance(data.performance || {});
   };
 
-  // Handle searching movies by title
   const handleSearch = async () => {
     const response = await fetch(`http://localhost:5000/api/movies/search?query=${searchQuery}`);
     const data = await response.json();
     setMovies(data);
   };
-
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-16 bg-gray-100">
@@ -113,7 +108,7 @@ const MovieApp = () => {
           onChange={(e) => setSelectedFilter(e.target.value)}
           className="border p-2 text-sm rounded-lg w-full"
         >
-          <option value="none">-- No Filter --</option>
+          <option value="">-- No Filter --</option>
           <option value="oldest">Oldest</option>
           <option value="newest">Newest</option>
           <option value="highest">Highest Rated</option>
@@ -129,11 +124,11 @@ const MovieApp = () => {
       </div>
 
       <div className="performanceBox">
-  <label>Algorithm: {performance.algorithm}</label>
-  {performance.executionTime && (
-    <p>Execution Time: {performance.executionTime.toFixed(2)} ms</p>
-  )}
-</div>
+        <label>Algorithm: {performance.algorithm}</label>
+        {performance.executionTime && (
+          <p>Execution Time: {performance.executionTime.toFixed(2)} ms</p>
+        )}
+      </div>
 
       <div className="movieBox">
         {movies.length === 0 ? (
@@ -143,10 +138,10 @@ const MovieApp = () => {
             <div key={index} className="movieCard">
               <img src={movie.image} alt={movie.title} className="movieImage" />
               <div className="movieDescription">
-              <h3 className="movieDetails">{movie.title}</h3>
-              <p className="text-sm">Year: {movie.year}</p>
-              <p className="text-sm">Rating: {movie.rating}/10</p>
-            </div>
+                <h3 className="movieDetails">{movie.title}</h3>
+                <p className="text-sm">Year: {movie.year}</p>
+                <p className="text-sm">Rating: {movie.rating}/10</p>
+              </div>
             </div>
           ))
         )}
