@@ -6,6 +6,8 @@ class Movie {
         this.image = image;
     }
 
+    //getters&setters
+
     get title() {
         return this._title;
     }
@@ -38,18 +40,22 @@ class Movie {
         this._image = newImage;
     }
 
+    //compare titles
     compareTitle(other) {
         return this.title.localeCompare(other.title);
     }
 
+    //compare year
     compareYear(other) {
         return this.year - other.year;
     }
 
+    //compare ratings
     compareRating(other) {
         return this.rating - other.rating;
     }
 
+    //compare based on field
     compareTo(other, field) {
         switch(field) {
             case 'title': return this.compareTitle(other);
