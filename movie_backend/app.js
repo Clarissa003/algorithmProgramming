@@ -13,8 +13,6 @@ const port = 5000;
 app.use(express.json());
 app.use(cors());
 
-let movies = [];
-
 //importing, sorting and filtering movies
 app.post('/api/movies/import', (req, res) => {
   try {
@@ -27,7 +25,7 @@ app.post('/api/movies/import', (req, res) => {
       const movieInstances = movieData.map(m => new Movie(m.title, m.year, m.rating, m.image));
 
       let result = [];
-      let algorithmUsed = "None"; // Initialize as "None"
+      let algorithmUsed = "None"; 
       let dataStructureUsed = "Array";
       let startTime, endTime, executionTime;
 
@@ -167,31 +165,6 @@ app.post('/api/movies/import', (req, res) => {
       console.error("Error in import endpoint:", error);
       res.status(500).json({ error: "Internal server error" });
   }
-});
-
-//search movies
-app.get('/api/movies/search', (req, res) => {
-    try {
-        const { query, dataStructure } = req.query;
-        let result = [];
-
-        if (dataStructure === 'linkedlist') {
-            const list = new LinkedList();
-            movies.forEach(movie => list.add(movie));
-            result = list.toArray().filter(movie =>
-                movie.title.toLowerCase().includes(query.toLowerCase())
-            );
-        } else {
-            result = movies.filter(movie =>
-                movie.title.toLowerCase().includes(query.toLowerCase())
-            );
-        }
-
-        res.json(result);
-    } catch (error) {
-        console.error("Error in search endpoint:", error);
-        res.status(500).json({ error: "Internal server error" });
-    }
 });
 
 app.listen(port, () => {
