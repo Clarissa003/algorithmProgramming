@@ -5,6 +5,7 @@ import BinaryHeap from './utils/BinaryHeap.js';
 import LinkedList from './data/LinkedList.js';
 import { mergeSort } from './utils/MergeSort.js';
 import BinaryTree from './utils/BinaryTree.js';
+import { quickSort } from './utils/QuickSort.js';
 
 const app = express();
 const port = 5000;
@@ -26,7 +27,7 @@ app.post('/api/movies/import', (req, res) => {
       const movieInstances = movieData.map(m => new Movie(m.title, m.year, m.rating, m.image));
 
       let result = [];
-      let algorithmUsed = "";
+      let algorithmUsed = "None"; // Initialize as "None"
       let dataStructureUsed = "Array";
       let startTime, endTime, executionTime;
 
@@ -73,7 +74,6 @@ app.post('/api/movies/import', (req, res) => {
           result.forEach(movie => filterHeap.push(movie));
 
           const topMovie = filterHeap.pop();
-
           endTime = performance.now();
           executionTime = endTime - startTime;
           algorithmUsed = "Heap Filter";
@@ -124,7 +124,10 @@ app.post('/api/movies/import', (req, res) => {
 
       //apply sorting
       if (sortBy) {
-          const [sortKey, sortOrder] = sortBy.split("-");
+          // Extract the base sort key (remove -asc/-desc)
+          const sortKey = sortBy.split('-')[0]; // This will get "year", "title", or "rating"
+          const sortOrder = sortBy.split('-')[1]; // This will get "asc" or "desc"
+          
           startTime = performance.now();
 
           if (sortKey === "year") {
@@ -136,9 +139,9 @@ app.post('/api/movies/import', (req, res) => {
               result = mergeSort(result, compareFn);
               algorithmUsed = "Merge Sort";
           } else if (sortKey === "rating") {
-              const compareFn = (a, b) => a.rating - b.rating;
-              result = mergeSort(result, compareFn);
-              algorithmUsed = "Merge Sort";
+              const compareFn = (a, b) => a.compareRating(b);
+              result = quickSort(result, compareFn);
+              algorithmUsed = "Quick Sort";
           }
 
           if (sortOrder === "desc") result.reverse();
