@@ -76,7 +76,7 @@ app.post('/api/movies/import', (req, res) => {
           const topMovie = filterHeap.pop();
           endTime = performance.now();
           executionTime = endTime - startTime;
-          algorithmUsed = "Heap Filter";
+          algorithmUsed = "Heap-based Search";
 
           return res.json({
               movies: [{
