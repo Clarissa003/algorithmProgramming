@@ -5,7 +5,6 @@ const MovieApp = () => {
   const [originalMovies, setOriginalMovies] = useState([]);
   const [selectedSort, setSelectedSort] = useState("year-asc");
   const [selectedFilter, setSelectedFilter] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
   const [performance, setPerformance] = useState({ algorithm: "" });
 
   const handleFileUpload = (event) => {
@@ -54,12 +53,6 @@ const MovieApp = () => {
     setPerformance(data.performance || {});
   };
 
-  const handleSearch = async () => {
-    const response = await fetch(`http://localhost:5000/api/movies/search?query=${searchQuery}`);
-    const data = await response.json();
-    setMovies(data);
-  };
-
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-16 bg-gray-100">
       <h1 className="text-5xl font-bold mb-16">Sort & Search - Movies</h1>
@@ -75,7 +68,7 @@ const MovieApp = () => {
       </div>
 
       <div className="sortBox w-full max-w-2xl space-y-4">
-        
+      
 
         <label className="block text-sm font-semibold">Sort by:</label>
         <select
