@@ -22,3 +22,9 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# Node.js
+movie_backend/node_modules/
+movie_backend/package-lock.json
+movie_backend/.env
+movie_backend/uploads/  

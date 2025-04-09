@@ -36,3 +36,191 @@
     transform: rotate(360deg);
   }
 }
+
+body {
+  background-color: #f5f5f5;
+  font-family: Arial, sans-serif;
+  padding: 2rem;
+  font-size: 18px;
+}
+
+h1 {
+  font-size: 3rem;
+  margin-bottom: 3rem;
+}
+
+input[type="file"] {
+  padding: 1rem;
+  font-size: 1.1rem;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 600px;
+  border: 1px solid #ccc;
+  margin-top: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+label {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: block;
+  
+}
+
+select {
+  padding: 1rem;
+  font-size: 1.1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 1.5rem;
+}
+
+button {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  border-radius: 8px;
+  background-color: #38a169;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+  max-width: 150px;
+}
+
+button:hover {
+  background-color: #2f855a;
+}
+
+form,
+.upload-section,
+.filter-section {
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 700px;
+}
+
+select, button, input[type="file"] {
+  font-size: 0.9rem;
+  padding: 0.5rem 0.75rem;
+}
+
+label {
+  font-size: 0.95rem;
+
+}
+
+
+.sortBox {
+  display: flex;
+  width: 100%;
+  max-width: 800px;
+  justify-content: space-between;
+  gap: 30px;
+}
+
+.sortBox > div:first-child {
+  flex: 1;
+  min-width: 300px;
+}
+
+.sortFilterBox {
+  display: flex;
+  gap: 15px;
+  align-items: baseline;
+}
+
+.sortFilterBox {
+  margin-left: 20px; 
+}
+
+.sortFilterBox > div {
+  display: flex;
+  align-items:normal;
+  gap: 5px; 
+}
+
+.sortFilterBox label {
+  margin-bottom: 0; 
+  white-space: nowrap; 
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.sortFilterBox select {
+  width: 120px; 
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.sortFilterBox button {
+  width: 140px; 
+  height: 32px;
+  padding: 0 12px;
+  background-color: #38a169;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  transition: background-color 0.3s ease;
+}
+
+.sortFilterBox button:hover {
+  background-color: #2f855a;
+}
+
+.sortBox input[type="text"] {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  height:22px;
+}
+
+.performanceBox{
+  display: flex;
+  justify-items: center;
+}
+
+.performanceBox > label
+{
+  margin-left: 40px;
+  font-weight: 150;
+}
+
+.movieCard {
+  display: flex;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.movieImage {
+  width: 200px;
+  height: auto;
+  object-fit: cover;
+}
+
+.movieDescription {
+  padding: 20px;
+  flex: 1;
+}
+
+.movieDetails {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.movieDetails span {
+  font-size: 1rem;
+  color: #555;
+}
