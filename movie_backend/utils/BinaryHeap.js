@@ -4,6 +4,7 @@ class BinaryHeap {
         this.compare = compareFn;
     }
   
+    //return the top element without removing it
     peek() {
         return this.heap.length > 0 ? this.heap[0] : null;
     }
@@ -35,6 +36,7 @@ class BinaryHeap {
         return root;
     }
   
+    //move the last element up to restore heap structure
     _heapifyUp() {
         let index = this.heap.length - 1;
         const element = this.heap[index];
@@ -52,6 +54,7 @@ class BinaryHeap {
         this.heap[index] = element;
     }
   
+    //move the root element down to maintain heap order
     _heapifyDown() {
         let index = 0;
         const length = this.heap.length;

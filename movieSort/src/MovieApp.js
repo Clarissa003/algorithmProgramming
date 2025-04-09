@@ -2,14 +2,13 @@ import React, { useState } from "react";
 
 const MovieApp = () => {
   const [movies, setMovies] = useState([]);
-  const [originalMovies, setOriginalMovies] = useState([]); // <-- store full movie list
+  const [originalMovies, setOriginalMovies] = useState([]); 
   const [selectedSort, setSelectedSort] = useState("yearAsc");
   const [selectedFilter, setSelectedFilter] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [performance, setPerformance] = useState({ algorithm: "" });
 
 
-  // Handle JSON file upload
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -17,8 +16,8 @@ const MovieApp = () => {
       reader.onload = (e) => {
         try {
           const json = JSON.parse(e.target.result);
-          setOriginalMovies(json); // full list
-          setMovies(json);         // display list
+          setOriginalMovies(json); 
+          setMovies(json);         
         } catch (error) {
           console.error("Invalid JSON file");
         }
@@ -40,7 +39,7 @@ const MovieApp = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        movies: originalMovies,      // use full list
+        movies: originalMovies,    
         sortBy: selectedSort,
         filterBy: selectedFilter,
       }),

@@ -1,4 +1,5 @@
 class LinkedListNode {
+    //single node in the list
     constructor(value, next = null) {
         this.value = value;
         this.next = next;
@@ -7,9 +8,9 @@ class LinkedListNode {
 
 class LinkedList {
     constructor() {
-        this.head = null;
-        this.tail = null;
-        this.length = 0;
+        this.head = null; //first node
+        this.tail = null; //last node
+        this.length = 0; // number of nodes
     }
 
     add(value) {
