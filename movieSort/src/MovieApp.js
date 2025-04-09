@@ -37,7 +37,7 @@ const MovieApp = () => {
       },
       body: JSON.stringify({
         movies: originalMovies,
-        sortBy: selectedSort, // This will be "rating-asc" or "rating-desc"
+        sortBy: selectedSort,
         filterBy: selectedFilter,
       }),
     });
